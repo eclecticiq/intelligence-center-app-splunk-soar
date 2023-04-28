@@ -1,0 +1,1755 @@
+{
+    "appid": "a855fbae-698a-4f7d-9b06-80cf3ae1742d",
+    "name": "EclecticIQ",
+    "description": "EclecticIQ Intelligence Center integration",
+    "type": "reputation",
+    "product_vendor": "EclecticIQ",
+    "logo": "eclecticiq.svg",
+    "logo_dark": "eclecticiq_dark.svg",
+    "product_name": "Intelligence Center integration",
+    "python_version": "3",
+    "product_version_regex": ".*",
+    "publisher": "EclecticIQ",
+    "license": "Copyright (c) EclecticIQ, 2023",
+    "app_version": "2.0.0",
+    "package_name": "phantom_eclecticiq",
+    "main_module": "eclecticiq_connector.py",
+    "min_phantom_version": "5.0.1",
+    "configuration": {
+        "tip_uri": {
+            "description": "EclecticIQ Intelligence Center address",
+            "data_type": "string",
+            "required": true,
+            "value_list": [],
+            "default": "",
+            "order": 0,
+            "name": "tip_uri",
+            "id": 0
+        },
+        "tip_password": {
+            "description": "EclecticIQ Password/Token",
+            "data_type": "password",
+            "required": true,
+            "order": 1,
+            "name": "tip_password",
+            "id": 1
+        },
+        "tip_api": {
+            "description": "EclecticIQ public API version",
+            "data_type": "string",
+            "required": true,
+            "value_list": [
+                "V1",
+                "V2"
+            ],
+            "default": "V1",
+            "order": 2,
+            "name": "tip_api",
+            "id": 2
+        },
+        "tip_ssl_check": {
+            "description": "EclecticIQ SSL cert check",
+            "data_type": "boolean",
+            "required": true,
+            "default": "False",
+            "order": 3,
+            "name": "tip_ssl_check",
+            "id": 3
+        },
+        "tip_group": {
+            "description": "EclecticIQ Group Name for Entities",
+            "data_type": "string",
+            "required": false,
+            "value_list": [],
+            "default": "",
+            "order": 4,
+            "name": "tip_group",
+            "id": 4
+        },
+        "tip_of_id": {
+            "description": "EclecticIQ Outgoing Feed ID # for polling",
+            "data_type": "numeric",
+            "required": false,
+            "value_list": [],
+            "default": "",
+            "order": 5,
+            "name": "tip_of_id",
+            "id": 5
+        },
+        "tip_proxy_uri": {
+            "description": "Proxy server address",
+            "data_type": "string",
+            "required": false,
+            "value_list": [],
+            "default": "",
+            "order": 6,
+            "name": "tip_proxy_uri",
+            "id": 6
+        },
+        "tip_proxy_user": {
+            "description": "Proxy server username",
+            "data_type": "string",
+            "required": false,
+            "value_list": [],
+            "default": "",
+            "order": 7,
+            "name": "tip_proxy_user",
+            "id": 7
+        },
+        "tip_proxy_password": {
+            "description": "Proxy server password",
+            "data_type": "password",
+            "required": false,
+            "order": 8,
+            "name": "tip_proxy_password",
+            "id": 8
+        }
+    },
+    "actions": [
+        {
+            "action": "test connectivity",
+            "identifier": "test_connectivity",
+            "description": "Validate the asset configuration for connectivity using supplied configuration",
+            "verbose": "",
+            "type": "test",
+            "read_only": true,
+            "parameters": {},
+            "output": [],
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "domain reputation",
+            "identifier": "domain_reputation",
+            "description": "Queries domain info",
+            "verbose": "",
+            "type": "investigate",
+            "read_only": true,
+            "parameters": {
+                "domain": {
+                    "description": "Domain to query",
+                    "data_type": "string",
+                    "required": true,
+                    "primary": true,
+                    "contains": [
+                        "domain",
+                        "url"
+                    ],
+                    "order": 0,
+                    "name": "domain",
+                    "id": 1,
+                    "param_name": "domain"
+                }
+            },
+            "output": [
+                {
+                    "data_path": "action_result.parameter.domain",
+                    "data_type": "string",
+                    "contains": [
+                        "domain",
+                        "url"
+                    ],
+                    "column_name": "domain",
+                    "column_order": 0
+                },
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.0",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.0.last_updated",
+                    "data_type": "string",
+                    "column_name": "last_updated",
+                    "column_order": 4
+                },
+                {
+                    "data_path": "action_result.data.0.maliciousness",
+                    "data_type": "string",
+                    "column_name": "maliciousness",
+                    "column_order": 1
+                },
+                {
+                    "data_path": "action_result.data.0.platform_link",
+                    "data_type": "string",
+                    "column_name": "platform_link",
+                    "column_order": 5
+                },
+                {
+                    "data_path": "action_result.data.0.created",
+                    "data_type": "string",
+                    "column_name": "created",
+                    "column_order": 3
+                },
+                {
+                    "data_path": "action_result.data.0.source_name",
+                    "data_type": "string",
+                    "column_name": "source_name",
+                    "column_order": 2
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.summary.important_data",
+                    "data_type": "string"
+                }
+            ],
+            "render": {
+                "type": "table"
+            },
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "email reputation",
+            "identifier": "email_reputation",
+            "description": "Queries email info",
+            "verbose": "",
+            "type": "investigate",
+            "read_only": true,
+            "parameters": {
+                "email": {
+                    "description": "Email to query",
+                    "data_type": "string",
+                    "required": true,
+                    "primary": true,
+                    "contains": [
+                        "email"
+                    ],
+                    "order": 0,
+                    "name": "email"
+                }
+            },
+            "output": [
+                {
+                    "data_path": "action_result.parameter.email",
+                    "data_type": "string",
+                    "contains": [
+                        "email"
+                    ],
+                    "column_name": "email",
+                    "column_order": 0
+                },
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.0",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.0.last_updated",
+                    "data_type": "string",
+                    "column_name": "last_updated",
+                    "column_order": 4
+                },
+                {
+                    "data_path": "action_result.data.0.maliciousness",
+                    "data_type": "string",
+                    "column_name": "maliciousness",
+                    "column_order": 1
+                },
+                {
+                    "data_path": "action_result.data.0.platform_link",
+                    "data_type": "string",
+                    "column_name": "platform_link",
+                    "column_order": 5
+                },
+                {
+                    "data_path": "action_result.data.0.created",
+                    "data_type": "string",
+                    "column_name": "created",
+                    "column_order": 3
+                },
+                {
+                    "data_path": "action_result.data.0.source_name",
+                    "data_type": "string",
+                    "column_name": "source_name",
+                    "column_order": 2
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.summary.important_data",
+                    "data_type": "string"
+                }
+            ],
+            "render": {
+                "type": "table"
+            },
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "file reputation",
+            "identifier": "file_reputation",
+            "description": "Queries for file reputation info",
+            "verbose": "",
+            "type": "investigate",
+            "read_only": true,
+            "parameters": {
+                "hash": {
+                    "description": "File hash to query",
+                    "data_type": "string",
+                    "required": true,
+                    "primary": true,
+                    "contains": [
+                        "hash",
+                        "sha256",
+                        "sha1",
+                        "md5"
+                    ],
+                    "order": 0,
+                    "name": "hash"
+                }
+            },
+            "output": [
+                {
+                    "data_path": "action_result.parameter.hash",
+                    "data_type": "string",
+                    "contains": [
+                        "hash",
+                        "sha256",
+                        "sha1",
+                        "md5"
+                    ],
+                    "column_name": "hash",
+                    "column_order": 0
+                },
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.0",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.0.last_updated",
+                    "data_type": "string",
+                    "column_name": "last_updated",
+                    "column_order": 4
+                },
+                {
+                    "data_path": "action_result.data.0.maliciousness",
+                    "data_type": "string",
+                    "column_name": "maliciousness",
+                    "column_order": 1
+                },
+                {
+                    "data_path": "action_result.data.0.platform_link",
+                    "data_type": "string",
+                    "column_name": "platform_link",
+                    "column_order": 5
+                },
+                {
+                    "data_path": "action_result.data.0.created",
+                    "data_type": "string",
+                    "column_name": "created",
+                    "column_order": 3
+                },
+                {
+                    "data_path": "action_result.data.0.source_name",
+                    "data_type": "string",
+                    "column_name": "source_name",
+                    "column_order": 2
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.summary.important_data",
+                    "data_type": "string"
+                }
+            ],
+            "render": {
+                "type": "table"
+            },
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "ip reputation",
+            "identifier": "ip_reputation",
+            "description": "Queries IP info",
+            "verbose": "",
+            "type": "investigate",
+            "read_only": true,
+            "parameters": {
+                "ip": {
+                    "description": "IP to query",
+                    "data_type": "string",
+                    "required": true,
+                    "primary": true,
+                    "contains": [
+                        "ip"
+                    ],
+                    "order": 0,
+                    "name": "ip"
+                }
+            },
+            "output": [
+                {
+                    "data_path": "action_result.parameter.ip",
+                    "data_type": "string",
+                    "contains": [
+                        "ip"
+                    ],
+                    "column_name": "ip",
+                    "column_order": 0
+                },
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.0",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.0.last_updated",
+                    "data_type": "string",
+                    "column_name": "last_updated",
+                    "column_order": 4
+                },
+                {
+                    "data_path": "action_result.data.0.maliciousness",
+                    "data_type": "string",
+                    "column_name": "maliciousness",
+                    "column_order": 1
+                },
+                {
+                    "data_path": "action_result.data.0.platform_link",
+                    "data_type": "string",
+                    "column_name": "platform_link",
+                    "column_order": 5
+                },
+                {
+                    "data_path": "action_result.data.0.created",
+                    "data_type": "string",
+                    "column_name": "created",
+                    "column_order": 3
+                },
+                {
+                    "data_path": "action_result.data.0.source_name",
+                    "data_type": "string",
+                    "column_name": "source_name",
+                    "column_order": 2
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.summary.important_data",
+                    "data_type": "string"
+                }
+            ],
+            "render": {
+                "type": "table"
+            },
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "url reputation",
+            "identifier": "url_reputation",
+            "description": "Queries URL info",
+            "verbose": "",
+            "type": "investigate",
+            "read_only": true,
+            "parameters": {
+                "url": {
+                    "description": "URL to query",
+                    "data_type": "string",
+                    "required": true,
+                    "primary": true,
+                    "contains": [
+                        "url"
+                    ],
+                    "order": 0,
+                    "name": "url"
+                }
+            },
+            "output": [
+                {
+                    "data_path": "action_result.parameter.url",
+                    "data_type": "string",
+                    "contains": [
+                        "url"
+                    ],
+                    "column_name": "url",
+                    "column_order": 0
+                },
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.0",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.0.last_updated",
+                    "data_type": "string",
+                    "column_name": "last_updated",
+                    "column_order": 4
+                },
+                {
+                    "data_path": "action_result.data.0.maliciousness",
+                    "data_type": "string",
+                    "column_name": "maliciousness",
+                    "column_order": 1
+                },
+                {
+                    "data_path": "action_result.data.0.platform_link",
+                    "data_type": "string",
+                    "column_name": "platform_link",
+                    "column_order": 5
+                },
+                {
+                    "data_path": "action_result.data.0.created",
+                    "data_type": "string",
+                    "column_name": "created",
+                    "column_order": 3
+                },
+                {
+                    "data_path": "action_result.data.0.source_name",
+                    "data_type": "string",
+                    "column_name": "source_name",
+                    "column_order": 2
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.summary.important_data",
+                    "data_type": "string"
+                }
+            ],
+            "render": {
+                "type": "table"
+            },
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "create sighting",
+            "identifier": "create_sighting",
+            "description": "Create sighting in EclecticIQ TIP",
+            "verbose": "The EclecticIQ group name must be provided for this action to run successfully. Either in the source parameter, or the asset configuration.",
+            "type": "contain",
+            "read_only": false,
+            "parameters": {
+                "sighting_title": {
+                    "description": "Sighting title",
+                    "data_type": "string",
+                    "required": true,
+                    "primary": false,
+                    "contains": [],
+                    "value_list": [],
+                    "default": "Sighting created by Phantom",
+                    "order": 0,
+                    "name": "sighting_title",
+                    "id": 1,
+                    "param_name": "sighting_title"
+                },
+                "sighting_description": {
+                    "description": "Sighting description",
+                    "data_type": "string",
+                    "required": false,
+                    "primary": false,
+                    "contains": [],
+                    "value_list": [],
+                    "default": "",
+                    "order": 1,
+                    "name": "sighting_description",
+                    "id": 2,
+                    "param_name": "sighting_description"
+                },
+                "confidence_value": {
+                    "description": "Confidence value",
+                    "data_type": "string",
+                    "required": true,
+                    "primary": false,
+                    "contains": [],
+                    "value_list": [
+                        "None",
+                        "Unknown",
+                        "Low",
+                        "Medium",
+                        "High"
+                    ],
+                    "default": "None",
+                    "order": 2,
+                    "name": "confidence_value",
+                    "id": 3,
+                    "param_name": "confidence_value"
+                },
+                "impact_value": {
+                    "description": "Impact value",
+                    "data_type": "string",
+                    "required": true,
+                    "primary": false,
+                    "contains": [],
+                    "value_list": [
+                        "None",
+                        "Unknown",
+                        "Low",
+                        "Medium",
+                        "High"
+                    ],
+                    "default": "None",
+                    "order": 3,
+                    "name": "impact_value",
+                    "id": 4,
+                    "param_name": "impact_value"
+                },
+                "tags": {
+                    "description": "Sighting tags delimited by ','",
+                    "data_type": "string",
+                    "required": true,
+                    "primary": false,
+                    "contains": [],
+                    "value_list": [],
+                    "default": "Phantom Sighting, Automatically created",
+                    "order": 4,
+                    "name": "tags",
+                    "id": 5,
+                    "param_name": "tags"
+                },
+                "observable_1_value": {
+                    "description": "Observable value",
+                    "data_type": "string",
+                    "required": true,
+                    "primary": false,
+                    "contains": [],
+                    "value_list": [],
+                    "default": "",
+                    "order": 5,
+                    "name": "observable_1_value",
+                    "id": 6,
+                    "param_name": "observable_1_value"
+                },
+                "observable_1_type": {
+                    "description": "Observable type",
+                    "data_type": "string",
+                    "required": true,
+                    "primary": false,
+                    "contains": [],
+                    "value_list": [
+                        "domain",
+                        "email",
+                        "email-subject",
+                        "file",
+                        "hash",
+                        "hash-md5",
+                        "hash-sha1",
+                        "hash-sha256",
+                        "hash-sha512",
+                        "host",
+                        "ipv4",
+                        "ipv6",
+                        "mutex",
+                        "port",
+                        "process",
+                        "sha512",
+                        "uri",
+                        "uri-hash-sha256",
+                        "winregistry"
+                    ],
+                    "default": "",
+                    "order": 6,
+                    "name": "observable_1_type",
+                    "id": 7,
+                    "param_name": "observable_1_type"
+                },
+                "observable_1_maliciousness": {
+                    "description": "Observalble maliciousness",
+                    "data_type": "string",
+                    "required": true,
+                    "primary": false,
+                    "contains": [],
+                    "value_list": [
+                        "Malicious (High confidence)",
+                        "Malicious (Medium confidence)",
+                        "Malicious (Low confidence)",
+                        "Safe",
+                        "Unknown"
+                    ],
+                    "default": "Unknown",
+                    "order": 7,
+                    "name": "observable_1_maliciousness",
+                    "id": 8,
+                    "param_name": "observable_1_maliciousness"
+                },
+                "observable_2_value": {
+                    "description": "Observable 2 value",
+                    "data_type": "string",
+                    "required": false,
+                    "primary": false,
+                    "contains": [],
+                    "value_list": [],
+                    "default": "",
+                    "order": 8,
+                    "name": "observable_2_value",
+                    "id": 9,
+                    "param_name": "observable_2_value"
+                },
+                "observable_2_type": {
+                    "description": "Observable 2 type",
+                    "data_type": "string",
+                    "required": false,
+                    "primary": false,
+                    "contains": [],
+                    "value_list": [
+                        "domain",
+                        "email",
+                        "email-subject",
+                        "file",
+                        "hash",
+                        "hash-md5",
+                        "hash-sha1",
+                        "hash-sha256",
+                        "hash-sha512",
+                        "host",
+                        "ipv4",
+                        "ipv6",
+                        "mutex",
+                        "port",
+                        "process",
+                        "sha512",
+                        "uri",
+                        "uri-hash-sha256",
+                        "winregistry"
+                    ],
+                    "default": "",
+                    "order": 9,
+                    "name": "observable_2_type",
+                    "id": 10,
+                    "param_name": "observable_2_type"
+                },
+                "observable_2_maliciousness": {
+                    "description": "Observable 2 maliciousness",
+                    "data_type": "string",
+                    "required": false,
+                    "primary": false,
+                    "contains": [],
+                    "value_list": [
+                        "Malicious (High confidence)",
+                        "Malicious (Medium confidence)",
+                        "Malicious (Low confidence)",
+                        "Safe",
+                        "Unknown"
+                    ],
+                    "default": "Unknown",
+                    "order": 10,
+                    "name": "observable_2_maliciousness",
+                    "id": 11,
+                    "param_name": "observable_2_maliciousness"
+                },
+                "observable_3_value": {
+                    "description": "Observable 3 value",
+                    "data_type": "string",
+                    "required": false,
+                    "primary": false,
+                    "contains": [],
+                    "value_list": [],
+                    "default": "",
+                    "order": 11,
+                    "name": "observable_3_value",
+                    "id": 12,
+                    "param_name": "observable_3_value"
+                },
+                "observable_3_type": {
+                    "description": "Observable 3 type",
+                    "data_type": "string",
+                    "required": false,
+                    "primary": false,
+                    "contains": [],
+                    "value_list": [
+                        "domain",
+                        "email",
+                        "email-subject",
+                        "file",
+                        "hash",
+                        "hash-md5",
+                        "hash-sha1",
+                        "hash-sha256",
+                        "hash-sha512",
+                        "host",
+                        "ipv4",
+                        "ipv6",
+                        "mutex",
+                        "port",
+                        "process",
+                        "sha512",
+                        "uri",
+                        "uri-hash-sha256",
+                        "winregistry"
+                    ],
+                    "default": "",
+                    "order": 12,
+                    "name": "observable_3_type",
+                    "id": 13,
+                    "param_name": "observable_3_type"
+                },
+                "observable_3_maliciousness": {
+                    "description": "Observable 3 maliciousness",
+                    "data_type": "string",
+                    "required": false,
+                    "primary": false,
+                    "contains": [],
+                    "value_list": [
+                        "Malicious (High confidence)",
+                        "Malicious (Medium confidence)",
+                        "Malicious (Low confidence)",
+                        "Safe",
+                        "Unknown"
+                    ],
+                    "default": "Unknown",
+                    "order": 13,
+                    "name": "observable_3_maliciousness",
+                    "id": 14,
+                    "param_name": "observable_3_maliciousness"
+                }
+            },
+            "output": [
+                {
+                    "data_path": "action_result.parameter.sighting_title",
+                    "data_type": "string",
+                    "contains": [],
+                    "column_name": "sighting_title",
+                    "column_order": 0
+                },
+                {
+                    "data_path": "action_result.parameter.sighting_description",
+                    "data_type": "string",
+                    "contains": [],
+                    "column_name": "sighting_description",
+                    "column_order": 1
+                },
+                {
+                    "data_path": "action_result.parameter.confidence_value",
+                    "data_type": "string",
+                    "contains": [],
+                    "column_name": "confidence_value",
+                    "column_order": 2
+                },
+                {
+                    "data_path": "action_result.parameter.impact_value",
+                    "data_type": "string",
+                    "contains": [],
+                    "column_name": "impact_value",
+                    "column_order": 3
+                },
+                {
+                    "data_path": "action_result.parameter.tags",
+                    "data_type": "string",
+                    "contains": [],
+                    "column_name": "tags",
+                    "column_order": 4
+                },
+                {
+                    "data_path": "action_result.parameter.observable_1_value",
+                    "data_type": "string",
+                    "contains": [],
+                    "column_name": "observable_1_value",
+                    "column_order": 5
+                },
+                {
+                    "data_path": "action_result.parameter.observable_1_type",
+                    "data_type": "string",
+                    "contains": [],
+                    "column_name": "observable_1_type",
+                    "column_order": 6
+                },
+                {
+                    "data_path": "action_result.parameter.observable_1_maliciousness",
+                    "data_type": "string",
+                    "contains": [],
+                    "column_name": "observable_1_maliciousness",
+                    "column_order": 7
+                },
+                {
+                    "data_path": "action_result.parameter.observable_2_value",
+                    "data_type": "string",
+                    "contains": [],
+                    "column_name": "observable_2_value",
+                    "column_order": 8
+                },
+                {
+                    "data_path": "action_result.parameter.observable_2_type",
+                    "data_type": "string",
+                    "contains": [],
+                    "column_name": "observable_2_type",
+                    "column_order": 9
+                },
+                {
+                    "data_path": "action_result.parameter.observable_2_maliciousness",
+                    "data_type": "string",
+                    "contains": [],
+                    "column_name": "observable_2_maliciousness",
+                    "column_order": 10
+                },
+                {
+                    "data_path": "action_result.parameter.observable_3_value",
+                    "data_type": "string",
+                    "contains": [],
+                    "column_name": "observable_3_value",
+                    "column_order": 11
+                },
+                {
+                    "data_path": "action_result.parameter.observable_3_type",
+                    "data_type": "string",
+                    "contains": [],
+                    "column_name": "observable_3_type",
+                    "column_order": 12
+                },
+                {
+                    "data_path": "action_result.parameter.observable_3_maliciousness",
+                    "data_type": "string",
+                    "contains": [],
+                    "column_name": "observable_3_maliciousness",
+                    "column_order": 13
+                },
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "column_name": "status",
+                    "column_order": 14
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric"
+                }
+            ],
+            "render": {
+                "type": "table"
+            },
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "create indicator",
+            "identifier": "create_indicator",
+            "description": "Create indicator in EclecticIQ TIP",
+            "verbose": "Action creates Indicator entity in The EclecticIQ Intelligence Center. Group name used as source must be provided for this action to run successfully. Either in the source parameter, or the asset configuration.",
+            "type": "contain",
+            "read_only": false,
+            "parameters": {
+                "indicator_title": {
+                    "description": "Indicator title",
+                    "data_type": "string",
+                    "required": true,
+                    "primary": false,
+                    "contains": [],
+                    "value_list": [],
+                    "default": "Indicator created by Phantom",
+                    "order": 0,
+                    "name": "indicator_title",
+                    "id": 1,
+                    "param_name": "indicator_title"
+                },
+                "indicator_description": {
+                    "description": "Indicator description",
+                    "data_type": "string",
+                    "required": false,
+                    "primary": false,
+                    "contains": [],
+                    "value_list": [],
+                    "default": "",
+                    "order": 1,
+                    "name": "indicator_description",
+                    "id": 2,
+                    "param_name": "indicator_description"
+                },
+                "confidence_value": {
+                    "description": "Confidence value",
+                    "data_type": "string",
+                    "required": true,
+                    "primary": false,
+                    "contains": [],
+                    "value_list": [
+                        "None",
+                        "Unknown",
+                        "Low",
+                        "Medium",
+                        "High"
+                    ],
+                    "default": "None",
+                    "order": 2,
+                    "name": "confidence_value",
+                    "id": 3,
+                    "param_name": "confidence_value"
+                },
+                "impact_value": {
+                    "description": "Impact value",
+                    "data_type": "string",
+                    "required": true,
+                    "primary": false,
+                    "contains": [],
+                    "value_list": [
+                        "None",
+                        "Unknown",
+                        "Low",
+                        "Medium",
+                        "High"
+                    ],
+                    "default": "None",
+                    "order": 3,
+                    "name": "impact_value",
+                    "id": 4,
+                    "param_name": "impact_value"
+                },
+                "tags": {
+                    "description": "Indicator tags delimited by ','",
+                    "data_type": "string",
+                    "required": false,
+                    "primary": false,
+                    "contains": [],
+                    "value_list": [],
+                    "default": "Phantom Indicator, Automatically created",
+                    "order": 4,
+                    "name": "tags",
+                    "id": 5,
+                    "param_name": "tags"
+                },
+                "observable_1_value": {
+                    "description": "Observable value",
+                    "data_type": "string",
+                    "required": true,
+                    "primary": false,
+                    "contains": [],
+                    "value_list": [],
+                    "default": "",
+                    "order": 5,
+                    "name": "observable_1_value",
+                    "id": 6,
+                    "param_name": "observable_1_value"
+                },
+                "observable_1_type": {
+                    "description": "Observable type",
+                    "data_type": "string",
+                    "required": true,
+                    "primary": false,
+                    "contains": [],
+                    "value_list": [
+                        "domain",
+                        "email",
+                        "email-subject",
+                        "file",
+                        "hash",
+                        "hash-md5",
+                        "hash-sha1",
+                        "hash-sha256",
+                        "hash-sha512",
+                        "host",
+                        "ipv4",
+                        "ipv6",
+                        "mutex",
+                        "port",
+                        "process",
+                        "sha512",
+                        "uri",
+                        "uri-hash-sha256",
+                        "winregistry"
+                    ],
+                    "default": "",
+                    "order": 6,
+                    "name": "observable_1_type",
+                    "id": 7,
+                    "param_name": "observable_1_type"
+                },
+                "observable_1_maliciousness": {
+                    "description": "Observalble maliciousness",
+                    "data_type": "string",
+                    "required": true,
+                    "primary": false,
+                    "contains": [],
+                    "value_list": [
+                        "Malicious (High confidence)",
+                        "Malicious (Medium confidence)",
+                        "Malicious (Low confidence)",
+                        "Safe",
+                        "Unknown"
+                    ],
+                    "default": "Unknown",
+                    "order": 7,
+                    "name": "observable_1_maliciousness",
+                    "id": 8,
+                    "param_name": "observable_1_maliciousness"
+                },
+                "observable_dictionary": {
+                    "description": "Observable dictionary",
+                    "data_type": "string",
+                    "required": false,
+                    "primary": false,
+                    "contains": [],
+                    "value_list": [],
+                    "default": "",
+                    "order": 8,
+                    "name": "observable_dictionary",
+                    "id": 9,
+                    "param_name": "observable_dictionary"
+                }
+            },
+            "output": [
+                {
+                    "data_path": "action_result.parameter.indicator_title",
+                    "data_type": "string",
+                    "contains": [],
+                    "column_name": "indicator_title",
+                    "column_order": 0
+                },
+                {
+                    "data_path": "action_result.parameter.indicator_description",
+                    "data_type": "string",
+                    "contains": [],
+                    "column_name": "indicator_description",
+                    "column_order": 1
+                },
+                {
+                    "data_path": "action_result.parameter.confidence_value",
+                    "data_type": "string",
+                    "contains": [],
+                    "column_name": "confidence_value",
+                    "column_order": 2
+                },
+                {
+                    "data_path": "action_result.parameter.impact_value",
+                    "data_type": "string",
+                    "contains": [],
+                    "column_name": "impact_value",
+                    "column_order": 3
+                },
+                {
+                    "data_path": "action_result.parameter.tags",
+                    "data_type": "string",
+                    "contains": [],
+                    "column_name": "tags",
+                    "column_order": 4
+                },
+                {
+                    "data_path": "action_result.parameter.observable_1_value",
+                    "data_type": "string",
+                    "contains": [],
+                    "column_name": "observable_1_value",
+                    "column_order": 5
+                },
+                {
+                    "data_path": "action_result.parameter.observable_1_type",
+                    "data_type": "string",
+                    "contains": [],
+                    "column_name": "observable_1_type",
+                    "column_order": 6
+                },
+                {
+                    "data_path": "action_result.parameter.observable_1_maliciousness",
+                    "data_type": "string",
+                    "contains": [],
+                    "column_name": "observable_1_maliciousness",
+                    "column_order": 7
+                },
+                {
+                    "data_path": "action_result.parameter.observable_dictionary",
+                    "data_type": "string",
+                    "contains": [],
+                    "column_name": "observable_dictionary",
+                    "column_order": 8
+                },
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "column_name": "status",
+                    "column_order": 9
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric"
+                }
+            ],
+            "render": {
+                "type": "table"
+            },
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "query entities",
+            "identifier": "query_entities",
+            "description": "Query EclecticIQ Intelligence Center for entities",
+            "verbose": "",
+            "type": "investigate",
+            "read_only": true,
+            "parameters": {
+                "observable": {
+                    "description": "Observable value to query related entities",
+                    "data_type": "string",
+                    "required": false,
+                    "primary": false,
+                    "contains": [
+                        "ip",
+                        "hash",
+                        "domain",
+                        "url",
+                        "sha1",
+                        "sha256",
+                        "md5",
+                        "sha512"
+                    ],
+                    "value_list": [],
+                    "default": "",
+                    "order": 0,
+                    "name": "observable",
+                    "id": 1,
+                    "param_name": "observable"
+                },
+                "entity_title": {
+                    "description": "Text to search inside entity title. To find exact phrase wrap it with double-quotes ( \" )",
+                    "data_type": "string",
+                    "required": false,
+                    "primary": false,
+                    "contains": [],
+                    "value_list": [],
+                    "default": "",
+                    "order": 1,
+                    "name": "entity_title",
+                    "id": 2,
+                    "param_name": "entity_title"
+                },
+                "entity_type": {
+                    "description": "Type of entity to limit query",
+                    "data_type": "string",
+                    "required": false,
+                    "primary": false,
+                    "contains": [],
+                    "value_list": [
+                        "all",
+                        "campaign",
+                        "course-of-action",
+                        "exploit-target",
+                        "incident",
+                        "indicator",
+                        "threat-actor",
+                        "ttp"
+                    ],
+                    "default": "all",
+                    "order": 2,
+                    "name": "entity_type",
+                    "id": 3,
+                    "param_name": "entity_type"
+                }
+            },
+            "output": [
+                {
+                    "data_path": "action_result.parameter.observable",
+                    "data_type": "string",
+                    "contains": [
+                        "ip",
+                        "hash",
+                        "domain",
+                        "url",
+                        "sha1",
+                        "sha256",
+                        "md5",
+                        "sha512"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.entity_title",
+                    "data_type": "string",
+                    "contains": []
+                },
+                {
+                    "data_path": "action_result.parameter.entity_type",
+                    "data_type": "string",
+                    "contains": []
+                },
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.0.*.entity_title",
+                    "data_type": "string",
+                    "column_name": "entity_title",
+                    "column_order": 0
+                },
+                {
+                    "data_path": "action_result.data.0.*.entity_type",
+                    "data_type": "string",
+                    "column_name": "entity_type",
+                    "column_order": 1
+                },
+                {
+                    "data_path": "action_result.data.0.*.description",
+                    "data_type": "string",
+                    "column_name": "description",
+                    "column_order": 2
+                },
+                {
+                    "data_path": "action_result.data.0.*.source_name",
+                    "data_type": "string",
+                    "column_name": "source_name",
+                    "column_order": 3
+                },
+                {
+                    "data_path": "action_result.data.0.*.created_at",
+                    "data_type": "string",
+                    "column_name": "threat_start",
+                    "column_order": 4
+                },
+                {
+                    "data_path": "action_result.data.0.*.tags_list",
+                    "data_type": "string",
+                    "column_name": "tags",
+                    "column_order": 5
+                },
+                {
+                    "data_path": "action_result.data.0.*.observables_output",
+                    "data_type": "string",
+                    "column_name": "observables",
+                    "column_order": 6
+                },
+                {
+                    "data_path": "action_result.data.0.*.relationships_output",
+                    "data_type": "string",
+                    "column_name": "relationships",
+                    "column_order": 7
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric"
+                }
+            ],
+            "render": {
+                "type": "table"
+            },
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "query entity by id",
+            "identifier": "query_entity_by_id",
+            "description": "Query EclecticIQ Intelligence Center for entity by its ID",
+            "verbose": "",
+            "type": "investigate",
+            "read_only": true,
+            "parameters": {
+                "entity_id": {
+                    "description": "Entity ID in EclecticIQ format, for example: a86f8393-eff6-4b31-b203-f63152be5a43",
+                    "data_type": "string",
+                    "required": true,
+                    "primary": true,
+                    "contains": [],
+                    "value_list": [],
+                    "default": "",
+                    "order": 0,
+                    "name": "entity_id",
+                    "id": 1,
+                    "param_name": "entity_id"
+                }
+            },
+            "output": [
+                {
+                    "data_path": "action_result.parameter.entity_id",
+                    "data_type": "string",
+                    "contains": []
+                },
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.0.entity_title",
+                    "data_type": "string",
+                    "column_name": "entity_title",
+                    "column_order": 0
+                },
+                {
+                    "data_path": "action_result.data.0.entity_type",
+                    "data_type": "string",
+                    "column_name": "entity_type",
+                    "column_order": 1
+                },
+                {
+                    "data_path": "action_result.data.0.description",
+                    "data_type": "string",
+                    "column_name": "description",
+                    "column_order": 2
+                },
+                {
+                    "data_path": "action_result.data.0.source_name",
+                    "data_type": "string",
+                    "column_name": "source_name",
+                    "column_order": 3
+                },
+                {
+                    "data_path": "action_result.data.0.created_at",
+                    "data_type": "string",
+                    "column_name": "threat_start",
+                    "column_order": 4
+                },
+                {
+                    "data_path": "action_result.data.0.tags_list",
+                    "data_type": "string",
+                    "column_name": "tags",
+                    "column_order": 5
+                },
+                {
+                    "data_path": "action_result.data.0.observables_output",
+                    "data_type": "string",
+                    "column_name": "observables",
+                    "column_order": 6
+                },
+                {
+                    "data_path": "action_result.data.0.relationships_output",
+                    "data_type": "string",
+                    "column_name": "relationships",
+                    "column_order": 7
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric"
+                }
+            ],
+            "render": {
+                "type": "table"
+            },
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "eclecticiq request get",
+            "identifier": "eclecticiq_request_get",
+            "description": "Make HTTP GET request to EclecticIQ Intelligence Center",
+            "verbose": "",
+            "type": "generic",
+            "read_only": true,
+            "parameters": {
+                "uri": {
+                    "description": "EclecticIQ URI excluding Intelligence Cetner address but including API version and params if needed. e.g. /private/status",
+                    "data_type": "string",
+                    "required": true,
+                    "primary": true,
+                    "contains": [],
+                    "value_list": [],
+                    "default": "",
+                    "order": 0,
+                    "name": "uri",
+                    "id": 1,
+                    "param_name": "uri"
+                }
+            },
+            "output": [
+                {
+                    "data_path": "action_result.parameter.uri",
+                    "data_type": "string",
+                    "contains": []
+                },
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.0.reply_status",
+                    "data_type": "string",
+                    "column_name": "reply_status",
+                    "column_order": 0
+                },
+                {
+                    "data_path": "action_result.data.0.reply_body",
+                    "data_type": "string",
+                    "column_name": "reply_body",
+                    "column_order": 1
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric"
+                }
+            ],
+            "render": {
+                "type": "table"
+            },
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "eclecticiq request post",
+            "identifier": "eclecticiq_request_post",
+            "description": "Make HTTP POST request to EclecticIQ Intelligence Center",
+            "verbose": "",
+            "type": "generic",
+            "read_only": false,
+            "parameters": {
+                "uri": {
+                    "description": "EclecticIQ URI excluding Intelligence Cetner address but including API version and params if needed.",
+                    "data_type": "string",
+                    "required": true,
+                    "primary": true,
+                    "contains": [],
+                    "value_list": [],
+                    "default": "",
+                    "order": 0,
+                    "name": "uri",
+                    "id": 1,
+                    "param_name": "uri"
+                },
+                "body": {
+                    "description": "JSON payload.",
+                    "data_type": "string",
+                    "required": true,
+                    "primary": true,
+                    "contains": [],
+                    "value_list": [],
+                    "default": "",
+                    "order": 1,
+                    "name": "body",
+                    "id": 2,
+                    "param_name": "body"
+                }
+            },
+            "output": [
+                {
+                    "data_path": "action_result.parameter.uri",
+                    "data_type": "string",
+                    "contains": []
+                },
+                {
+                    "data_path": "action_result.parameter.body",
+                    "data_type": "string",
+                    "contains": []
+                },
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.0.reply_status",
+                    "data_type": "string",
+                    "column_name": "reply_status",
+                    "column_order": 0
+                },
+                {
+                    "data_path": "action_result.data.0.reply_body",
+                    "data_type": "string",
+                    "column_name": "reply_body",
+                    "column_order": 1
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric"
+                }
+            ],
+            "render": {
+                "type": "table"
+            },
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "eclecticiq request delete",
+            "identifier": "eclecticiq_request_delete",
+            "description": "Make HTTP DELETE request to EclecticIQ Intelligence Center",
+            "verbose": "",
+            "type": "generic",
+            "read_only": false,
+            "parameters": {
+                "uri": {
+                    "description": "EclecticIQ URI excluding Intelligence Cetner address but including API version and params if needed.",
+                    "data_type": "string",
+                    "required": true,
+                    "primary": true,
+                    "contains": [],
+                    "value_list": [],
+                    "default": "",
+                    "order": 0,
+                    "name": "uri",
+                    "id": 1,
+                    "param_name": "uri"
+                }
+            },
+            "output": [
+                {
+                    "data_path": "action_result.parameter.uri",
+                    "data_type": "string",
+                    "contains": []
+                },
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.0.reply_status",
+                    "data_type": "string",
+                    "column_name": "reply_status",
+                    "column_order": 0
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric"
+                }
+            ],
+            "render": {
+                "type": "table"
+            },
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "on poll",
+            "identifier": "on_poll",
+            "description": "Callback action for the on_poll ingest functionality",
+            "verbose": "",
+            "type": "ingest",
+            "read_only": true,
+            "parameters": {
+                "container_id": {
+                    "description": "Container IDs to limit the ingestion to",
+                    "data_type": "string",
+                    "required": false,
+                    "primary": false,
+                    "name": "container_id"
+                },
+                "start_time": {
+                    "description": "Start of time range, in epoch time (milliseconds)",
+                    "data_type": "numeric",
+                    "required": false,
+                    "primary": false,
+                    "order": 1,
+                    "name": "start_time"
+                },
+                "end_time": {
+                    "description": "End of time range, in epoch time (milliseconds)",
+                    "data_type": "numeric",
+                    "required": false,
+                    "primary": false,
+                    "order": 2,
+                    "name": "end_time"
+                },
+                "container_count": {
+                    "description": "Maximum number of container records to query for",
+                    "data_type": "numeric",
+                    "required": false,
+                    "primary": false,
+                    "name": "container_count"
+                },
+                "artifact_count": {
+                    "description": "Maximum number of artifact records to query for",
+                    "data_type": "numeric",
+                    "required": false,
+                    "primary": false,
+                    "name": "artifact_count"
+                },
+                "feed_ids": {
+                    "description": "TIP feed IDs delimited by \",\"",
+                    "data_type": "string",
+                    "required": false,
+                    "primary": false,
+                    "order": 5,
+                    "name": "feed_ids"
+                }
+            },
+            "output": [],
+            "versions": "EQ(*)"
+        }
+    ],
+    "version": 1,
+    "appname": "-",
+    "executable": "spawn3",
+    "disabled": false
+}
