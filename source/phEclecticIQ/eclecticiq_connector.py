@@ -672,7 +672,7 @@ class EclecticiqAppConnector(BaseConnector):
         entity_value = param.get('entity_title', None)
         query_result = self.eiq_api.search_entity(entity_value=entity_value, entity_type=entity_type, observable_value=query)
 
-        if query_result is not False:
+        if (type(query_result) is dict) or (type(query_result) is list): 
             output_result = []
             
             for entity in query_result:
@@ -688,7 +688,6 @@ class EclecticiqAppConnector(BaseConnector):
             summary['total_count'] = len(query_result)
 
             return action_result.set_status(phantom.APP_SUCCESS, 'Entity found in EclecticIQ Platform.')
-
         elif query_result is False:
             summary = action_result.update_summary({})
             summary['total_count'] = '0'
@@ -701,10 +700,17 @@ class EclecticiqAppConnector(BaseConnector):
         action_result = self.add_action_result(ActionResult(dict(param)))
 
         entity_id = param.get('entity_id', None)
-
+        
         query_result = self.eiq_api.get_entity_by_id(entity_id)
 
-        if query_result is not False:          
+        if type(query_result).__name__ == "Exception":
+            if "Status code:404" in str(query_result):
+                summary = action_result.update_summary({})
+                summary['total_count'] = '0'
+                return action_result.set_status(phantom.APP_SUCCESS, 'No entities found in EclecticIQ Platform.')
+            else:
+                return action_result.set_status(phantom.APP_ERROR)                
+        elif (type(query_result) is dict) or (type(query_result) is list):          
             record = []
             record = query_result
             record["observables_output"] = str(query_result["observables_list"])
@@ -716,11 +722,6 @@ class EclecticiqAppConnector(BaseConnector):
             summary['total_count'] = 1
 
             return action_result.set_status(phantom.APP_SUCCESS, 'Entity found in EclecticIQ Platform.')
-
-        elif query_result is False:
-            summary = action_result.update_summary({})
-            summary['total_count'] = '0'
-            return action_result.set_status(phantom.APP_SUCCESS, 'No entities found in EclecticIQ Platform.')
         else:
             return action_result.set_status(phantom.APP_ERROR)
 
