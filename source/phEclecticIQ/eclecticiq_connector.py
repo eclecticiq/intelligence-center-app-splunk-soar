@@ -264,7 +264,7 @@ class EclecticiqAppConnector(BaseConnector):
         self.save_progress("Testing EclecticIQ Intelligence Center availability.")
         
         try:
-            status = self.eiq_api.get_status()
+            status = self.eiq_api.get_status()            
             self.save_progress("Test passed, authorization and connectivity successful. EclecticIQ Intelligence Center status: " + status['health'])
         except Exception as e:
             self.save_progress(str(e))
@@ -869,7 +869,7 @@ class EclecticiqAppConnector(BaseConnector):
         config = self.get_config()
 
         self.eiq_api = eiqlib.EclecticIQ_api(baseurl=config['tip_uri'],
-                                      eiq_version='2.14',
+                                      eiq_api_version=config.get('tip_api', "v1"),
                                       username="",
                                       password=config['tip_password'],
                                       verify_ssl=config.get('tip_ssl_check', False),

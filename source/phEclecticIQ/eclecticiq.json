@@ -11,7 +11,7 @@
     "product_version_regex": ".*",
     "publisher": "EclecticIQ",
     "license": "Copyright (c) EclecticIQ, 2023",
-    "app_version": "2.0.1",
+    "app_version": "2.1.0",
     "package_name": "phantom_eclecticiq",
     "main_module": "eclecticiq_connector.py",
     "min_phantom_version": "5.0.1",
@@ -39,10 +39,10 @@
             "data_type": "string",
             "required": true,
             "value_list": [
-                "V1",
-                "V2"
+                "v1",
+                "v2"
             ],
-            "default": "V1",
+            "default": "v1",
             "order": 2,
             "name": "tip_api",
             "id": 2

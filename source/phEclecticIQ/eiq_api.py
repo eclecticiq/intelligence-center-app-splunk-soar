@@ -25,40 +25,11 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 #from app.qpylib import qpylib
 
-__version__ = '0.1.0'
+__version__ = '1.0.0'
 __license__ = 'Apache License 2.0'
 
 API_PATHS = {
-    'FC': {
-        'auth': '/feeds/auth',
-        'feeds_list': '/feeds/downloads/',
-        'feed_content_blocks': '/feeds/downloads/'
-    },
-    '2.01': {
-        'auth': '/api/auth',
-        'group_id_search': '/api/sources/',
-        'feeds_list': '/private/outgoing-feed-download/',
-        'outgoing_feeds': '/private/outgoing-feeds/',
-        'feed_content_blocks': '/private/outgoing-feed-download/',
-        'groups': '/private/groups/',
-        'entities': '/private/entities/',
-        'observable_search': '/api/observables/',
-        'observable_search_raw': '/private/search-history/search-observable',
-        'entity_search': '/private/search-all',
-        'entity_get': '/private/entities/',
-        'taxonomy_get': '/private/taxonomies/',
-        'observables': '/private/search-all',
-        'tasks': '/private/tasks/',
-        'dataset': '/private/intel-sets/',
-        'task_status': '/private/task-runs/',
-        'incoming_feeds': '/private/incoming-feeds/',
-        'observables_batch_delete': '/private/extracts/batch-delete/',
-        'status': '/private/status',
-        'enrichers': '/private/enricher-tasks/',
-        'enrichers-run': '/private/enricher-tasks/batch-run'
-    },
-    '2.14': {
-        'auth': '/api/auth',
+    'v1': {
         'group_id_search': '/api/v1/sources/',
         'feeds_list': '/private/outgoing-feed-download/',
         'outgoing_feeds': '/private/outgoing-feeds/',
@@ -68,7 +39,6 @@ API_PATHS = {
         'observable_search': '/api/v1/observables',
         'observable_search_raw': '/private/search-history/search-observable',
         'entity_search': '/api/v1/entities',
-        #'entity_get': '/api/v1/entities/',
         'taxonomy_get': '/api/v1/taxonomies',
         'observables': '/private/search-all',
         'tasks': '/private/tasks/',
@@ -81,32 +51,31 @@ API_PATHS = {
         'enrichers': '/private/enricher-tasks/',
         'enrichers-run': '/private/enricher-tasks/batch-run'
     },
-    '2.0': {
-        'auth': '/api/auth',
-        'feeds_list': '/api/outgoing-feed-download/',
-        'feed_content_blocks': '/api/outgoing-feed-download/',
-        'groups': '/api/groups/',
-        'entities': '/api/entities/',
-        'observables': '/api/search-all/'
+    'v2': {
+        'group_id_search': '/api/v2/sources/',
+        'feeds_list': '/private/outgoing-feed-download/',
+        'outgoing_feeds': '/private/outgoing-feeds/',
+        'feed_content_blocks': '/private/outgoing-feed-download/',
+        'groups': '/private/groups/',
+        'entities': '/private/entities/',
+        'observable_search': '/api/v2/observables',
+        'observable_search_raw': '/private/search-history/search-observable',
+        'entity_search': '/api/v2/entities',
+        'taxonomy_get': '/api/v2/taxonomies',
+        'observables': '/private/search-all',
+        'tasks': '/private/tasks/',
+        'dataset': '/private/intel-sets/',
+        'relationships': '/api/v2/relationships',
+        'task_status': '/private/task-runs/',
+        'incoming_feeds': '/private/incoming-feeds/',
+        'observables_batch_delete': '/private/extracts/batch-delete/',
+        'status': '/private/status',
+        'enrichers': '/private/enricher-tasks/',
+        'enrichers-run': '/private/enricher-tasks/batch-run'
     }
 }
 
 USER_AGENT = "script"
-
-DATAMODEL = {
-    'FC-Essentials': {
-
-    },
-    'FC-Spotlight': {
-
-    },
-    'pre2.2': {
-
-    },
-    '2.2': {
-
-    }
-}
 
 def extract_uuid_from_url(url):
     match = re.search('[\da-z\-]{36}', url)
@@ -117,10 +86,10 @@ def extract_uuid_from_url(url):
         return None
     
 def observable_id_from_url(url):
-    match = re.search('[\d]{7}', url)
+    match = re.search('(observables\/)([\d]+)', url)
 
     if match:
-        return match.group()
+        return match.group(2)
     else:
         return None
 
@@ -143,7 +112,7 @@ def format_ts_human(dt):
 class EclecticIQ_api(object):
     def __init__(self,
                  baseurl,
-                 eiq_version,
+                 eiq_api_version,
                  username,
                  password,
                  verify_ssl=True,
@@ -162,9 +131,7 @@ class EclecticIQ_api(object):
         self.proxy_username = proxy_username
         self.proxy_password = proxy_password
         self.proxies = self.set_eiq_proxy()
-        self.eiq_api_version = self.set_eiq_api_version(eiq_version)
-        self.eiq_datamodel_version = self.set_eiq_datamodel_version(eiq_version)
-        self.token_expires = 0
+        self.eiq_api_version = eiq_api_version
         self.taxonomie_dict = {}
         self.headers = {
             'user-agent': USER_AGENT,
@@ -193,26 +160,6 @@ class EclecticIQ_api(object):
         # TD
         return
 
-    def sanitize_eiq_version(self, eiq_version):
-        if "." in eiq_version:
-            eiq_version = decimal.Decimal(re.search(r"^\d+\.\d+", eiq_version).group())
-            # to convert version 2.5 for example to 2.05
-            if len(str(eiq_version).split(".")[1]) < 2:
-                i, d = divmod(eiq_version, 1)
-                d = d/10
-                eiq_version = i + d
-            return float(eiq_version)
-        elif re.findall(r"fc\-essentials", eiq_version, flags=re.IGNORECASE):
-            return "FC-Essentials"
-        elif re.findall(r"fc\-spotlight", eiq_version, flags=re.IGNORECASE):
-            return "FC-Spotlight"
-        else:
-            try:
-                eiq_version = re.search(r"^\d+\.\d", eiq_version).group()
-                return int(eiq_version)
-            except ValueError:
-                pass
-
     def set_eiq_proxy(self):
         if self.proxy_ip and self.proxy_username and self.proxy_password:
             return {
@@ -227,54 +174,22 @@ class EclecticIQ_api(object):
         else:
             return None
 
-    def set_eiq_api_version(self, eiq_version):
-        eiq_version = self.sanitize_eiq_version(eiq_version)
-
-        if (isinstance(eiq_version, float) or isinstance(eiq_version, int)) and eiq_version < 2.01:
-            return '2.0'
-        elif (isinstance(eiq_version, float) or isinstance(eiq_version, int)) and (eiq_version >= 2.01 and eiq_version < 2.14):
-            return '2.01'
-        elif (isinstance(eiq_version, float) or isinstance(eiq_version, int)) and eiq_version >= 2.14:
-            return '2.14'
-        elif re.match(r"FC", eiq_version):
-            return 'FC'
-        else:
-            return 'WARNING'
-
-    def set_eiq_datamodel_version(self, eiq_version):
-        eiq_version = self.sanitize_eiq_version(eiq_version)
-        if (isinstance(eiq_version, float) or isinstance(eiq_version, int)) and eiq_version < 2.02:
-            return "pre2.2"
-        elif (isinstance(eiq_version, float) or isinstance(eiq_version, int)) and eiq_version >= 2.02:
-            return "2.2"
-        elif eiq_version == "FC-Essentials":
-            return "FC-Essentials"
-        elif eiq_version == "FC-Spotlight":
-            return "FC-Spotlight"
-        else:
-            # TD add warning
-            return 'WARNING'
-
     def get_outh_token(self, test_credentials = True):
         self.eiq_logging.info('Authenticating using username: ' + str(self.eiq_username))
 
-        if (re.match("^[\dabcdef]{64}$", self.eiq_password)) == None:
-            try:
-                r = requests.post(
-                    self.baseurl + API_PATHS[self.eiq_api_version]['auth'],
+        try:
+            self.headers['Authorization'] = 'Bearer ' + self.eiq_password
+
+            if test_credentials:
+                r = requests.get(
+                    self.baseurl + '/api',
                     headers=self.headers,
-                    data=json.dumps({
-                        'username': self.eiq_username,
-                        'password': self.eiq_password
-                    }),
                     verify=self.verify_ssl,
                     proxies=self.proxies,
                     timeout=30
                 )
 
                 if r and r.status_code in [100, 200, 201, 202]:
-                    self.headers['Authorization'] = 'Bearer ' + r.json()['token']
-                    self.token_expires = time.time() + 1500
                     self.eiq_logging.info('Authentication successful')
                 else:
                     if not r:
@@ -285,57 +200,17 @@ class EclecticIQ_api(object):
                         err = r.json()
                         detail = err['errors'][0]['detail']
                         msg = ('EclecticIQ VA returned an error, code:[{0}], reason:[{1}], URL: [{2}], details:[{3}]'
-                               .format(r.status_code, r.reason, r.url, detail))
+                            .format(r.status_code, r.reason, r.url, detail))
                     except Exception:
                         msg = ('EclecticIQ VA returned an error, code:[{0}], reason:[{1}], URL: [{2}]'
-                               .format(r.status_code, r.reason, r.url))
+                            .format(r.status_code, r.reason, r.url))
                     raise Exception(msg)
-
-            except Exception:
-                self.eiq_logging.error("Authentication failed")
-                raise
-        else:
-            try:
-                self.headers['Authorization'] = 'Bearer ' + self.eiq_password
-
-                if test_credentials:
-                    r = requests.get(
-                        self.baseurl + '/api',
-                        headers=self.headers,
-                        verify=self.verify_ssl,
-                        proxies=self.proxies,
-                        timeout=30
-                    )
-
-                    if r and r.status_code in [100, 200, 201, 202]:
-                        self.token_expires = time.time() + 1500
-                        self.eiq_logging.info('Authentication successful')
-                    else:
-                        if not r:
-                            msg = 'Could not perform auth request to EclecticIQ'
-                            self.eiq_logging.exception(msg)
-                            raise Exception(msg)
-                        try:
-                            err = r.json()
-                            detail = err['errors'][0]['detail']
-                            msg = ('EclecticIQ VA returned an error, code:[{0}], reason:[{1}], URL: [{2}], details:[{3}]'
-                                .format(r.status_code, r.reason, r.url, detail))
-                        except Exception:
-                            msg = ('EclecticIQ VA returned an error, code:[{0}], reason:[{1}], URL: [{2}]'
-                                .format(r.status_code, r.reason, r.url))
-                        raise Exception(msg)
-                else:
-                    self.token_expires = time.time() + 1500
-                    
-            except Exception:
-                self.eiq_logging.error("Authentication failed")
-                raise
+                
+        except Exception:
+            self.eiq_logging.error("Authentication failed")
+            raise
 
     def send_api_request(self, method, path, params=None, data=None):
-
-        if self.token_expires < time.time():
-            self.get_outh_token(test_credentials=False)
-
         url = self.baseurl + path
 
         r = None
@@ -1255,30 +1130,29 @@ class EclecticIQ_api(object):
 
         if len(parsed_response['data']) > 0:
             for i in parsed_response['data']:
-                if direction == "source":
-                    relation = {}
+                relation = {}
+                if direction == "source":                    
                     r = self.send_api_request(
                         'get',
-                        path=API_PATHS[self.eiq_api_version]['entity_search'] + "/" + str(extract_uuid_from_url(i["data"]["target"])))                    
-                    related_entity_parsed_response = json.loads(r.text)
-                    relation["relation_title"] = i["meta"]["title"]
-                    relation["entity_title"] = related_entity_parsed_response["data"]["data"]["title"]
-                    relation["entity_type"] = related_entity_parsed_response["data"]["type"]
-                    relation["entity_id"] = related_entity_parsed_response["data"]["id"]
-                    relation["observables_count"] = len(related_entity_parsed_response["data"]["observables"])
-                    result.append(relation)
+                        path=API_PATHS[self.eiq_api_version]['entity_search'] + "/" + str(extract_uuid_from_url(i["data"]["target"])))
                 elif direction == "target":
-                    relation = {}
                     r = self.send_api_request(
                         'get',
-                        path=API_PATHS[self.eiq_api_version]['entity_search'] + "/" + str(extract_uuid_from_url(i["data"]["source"])))                    
-                    related_entity_parsed_response = json.loads(r.text)
+                        path=API_PATHS[self.eiq_api_version]['entity_search'] + "/" + str(extract_uuid_from_url(i["data"]["source"])))
+                    
+                related_entity_parsed_response = json.loads(r.text)
+                    
+                if self.eiq_api_version == "v1":
                     relation["relation_title"] = i["meta"]["title"]
-                    relation["entity_title"] = related_entity_parsed_response["data"]["data"]["title"]
                     relation["entity_type"] = related_entity_parsed_response["data"]["type"]
-                    relation["entity_id"] = related_entity_parsed_response["data"]["id"]
-                    relation["observables_count"] = len(related_entity_parsed_response["data"]["observables"])
-                    result.append(relation)        
+                elif self.eiq_api_version == "v2":
+                    relation["relation_title"] = i["data"]["key"]
+                    relation["entity_type"] = related_entity_parsed_response["data"]["data"]["type"]
+                                
+                relation["entity_title"] = related_entity_parsed_response["data"]["data"]["title"]                
+                relation["entity_id"] = related_entity_parsed_response["data"]["id"]
+                relation["observables_count"] = len(related_entity_parsed_response["data"]["observables"])
+                result.append(relation)
         return result
 
 
@@ -1330,7 +1204,6 @@ class EclecticIQ_api(object):
             result = dict()
 
             result['entity_title'] = parsed_response['data']['data'].get('title', 'N/A')
-            result['entity_type'] = parsed_response['data'].get('type', 'N/A')
             result['created_at'] = str(parsed_response['data'].get('created_at', 'N/A'))[:16]
             source = self.get_group_name(extract_uuid_from_url(parsed_response['data']['sources'][0]))
             result['source_name'] = source['type'] + ': ' + source['name']
@@ -1338,6 +1211,11 @@ class EclecticIQ_api(object):
             result['confidence'] = parsed_response['data']['data'].get('confidence', 'N/A')
             result['description'] = parsed_response['data']['data'].get('description', 'N/A')
             result['impact'] = parsed_response['data']['data'].get('impact', 'N/A')
+
+            if self.eiq_api_version == "v1":
+                result['entity_type'] = parsed_response['data'].get('type', 'N/A')
+            elif self.eiq_api_version == "v2":
+                result['entity_type'] = parsed_response['data']['data'].get('type', 'N/A')            
 
             try:
                 for i in parsed_response['data']['meta']['tags']:
