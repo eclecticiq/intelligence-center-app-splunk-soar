@@ -264,8 +264,8 @@ class EclecticiqAppConnector(BaseConnector):
         self.save_progress("Testing EclecticIQ Intelligence Center availability.")
         
         try:
-            status = self.eiq_api.get_status()            
-            self.save_progress("Test passed, authorization and connectivity successful. EclecticIQ Intelligence Center status: " + status['health'])
+            status = self.eiq_api.get_user_status()            
+            self.save_progress("Test passed, authorization and connectivity successful.")
         except Exception as e:
             self.save_progress(str(e))
             self.save_progress("Connectivity and auth test failed.")
