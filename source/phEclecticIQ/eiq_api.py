@@ -48,6 +48,7 @@ API_PATHS = {
         'incoming_feeds': '/private/incoming-feeds/',
         'observables_batch_delete': '/private/extracts/batch-delete/',
         'status': '/private/status',
+        'user_status': '/private/users/me',
         'enrichers': '/private/enricher-tasks/',
         'enrichers-run': '/private/enricher-tasks/batch-run'
     },
@@ -70,6 +71,7 @@ API_PATHS = {
         'incoming_feeds': '/private/incoming-feeds/',
         'observables_batch_delete': '/private/extracts/batch-delete/',
         'status': '/private/status',
+        'user_status': '/private/users/me',        
         'enrichers': '/private/enricher-tasks/',
         'enrichers-run': '/private/enricher-tasks/batch-run'
     }
@@ -186,7 +188,7 @@ class EclecticIQ_api(object):
                     headers=self.headers,
                     verify=self.verify_ssl,
                     proxies=self.proxies,
-                    timeout=30
+                    timeout=300
                 )
 
                 if r and r.status_code in [100, 200, 201, 202]:
@@ -223,7 +225,7 @@ class EclecticIQ_api(object):
                     data=json.dumps(data),
                     verify=self.verify_ssl,
                     proxies=self.proxies,
-                    timeout=30
+                    timeout=300
                 )
             elif method == 'put':
                 r = requests.put(
@@ -233,7 +235,7 @@ class EclecticIQ_api(object):
                     data=json.dumps(data),
                     verify=self.verify_ssl,
                     proxies=self.proxies,
-                    timeout=30
+                    timeout=300
                 )
             elif method == 'get':
                 r = requests.get(
@@ -243,7 +245,7 @@ class EclecticIQ_api(object):
                     data=json.dumps(data),
                     verify=self.verify_ssl,
                     proxies=self.proxies,
-                    timeout=30
+                    timeout=300
                 )
             elif method == 'delete':
                 r = requests.delete(
@@ -253,7 +255,7 @@ class EclecticIQ_api(object):
                     data=json.dumps(data),
                     verify=self.verify_ssl,
                     proxies=self.proxies,
-                    timeout=30
+                    timeout=300
                 )
             else:
                 self.eiq_logging.error("Unknown method: " + str(method))
@@ -367,6 +369,16 @@ class EclecticIQ_api(object):
         r = self.send_api_request(
             'get',
             path=API_PATHS[self.eiq_api_version]['status'])
+
+        return r.json()['data']
+
+    def get_user_status(self):
+        # get platform status
+        self.eiq_logging.info("Requesting User status")
+
+        r = self.send_api_request(
+            'get',
+            path=API_PATHS[self.eiq_api_version]['user_status'])
 
         return r.json()['data']
 
