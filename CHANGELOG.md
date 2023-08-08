@@ -1,5 +1,11 @@
 # Changelog
 
+## 2023-08-08 -- 2.1.1
+
+* fixed support link in readme
+* removed Splunkbase link
+* App version set to 2.1.1
+
 ## 2023-05-25 -- 2.1.0
 
 * fixed issue with "search entity" and "search entity by id" in case of observable attached to entity with less then 6 digit number.
