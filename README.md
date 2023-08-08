@@ -6,7 +6,6 @@ The EclecticIQ Intelligence Center app for Splunk SOAR allows you to enrich inte
 
 You can download a packaged version of this app to install via:
 
-* [Splunkbase](https://splunkbase.splunk.com/apps?keyword=eclecticiq)
 * This repository, under the `/builds` directory (making sure to select the desired version)
 
 ## User documentation
@@ -23,7 +22,7 @@ To package any custom changes to this app and install on Splunk, [follow these i
 
 ## Support
 
-Please contact support@eclecticiq.com should you experience any issues using this app.
+For technical support issue or queries, please open a ticket via the EclecticIQ customer portal https://support.eclecticiq.com/.
 
 To help us quickly address your issue, when raising a support ticket please include;
 
